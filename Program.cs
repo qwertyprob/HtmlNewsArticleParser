@@ -1,20 +1,50 @@
-﻿// Site url: https://ru.diez.md/ on russian 
-//Html parser into json + streamwrite(make it fiele) 
-
-
+﻿using System;
 using HtmlAgilityPack;
-using static System.Net.WebRequestMethods;
+using Newtonsoft.Json; 
+using System.IO;
+using ParserHtml;
+using System.Text;
+
+var jsonArray = new List<NewsParseClass>();
+
+var jsonElemList = BigMehod.BigMethodRealization("https://zugo.md/");
+
+var jsonElemListSecondPage = BigMehod.BigMethodRealization("https://zugo.md/page/2");
+
+var jsonElemListThirdPage = BigMehod.BigMethodRealization("https://zugo.md/page/3");
+
+    foreach (var item in jsonElemList)
+    {
+       jsonArray.Add(item);
+    }
+    foreach (var item in jsonElemListSecondPage)
+    {
+        jsonArray.Add(item);
+    }
+    foreach (var item in jsonElemListThirdPage)
+    {
+        jsonArray.Add(item);
+    }
 
 
+//JsonParse 
 
-string url = @"https://tv8.md/ru";
+string json = JsonConvert.SerializeObject(jsonElemList, Formatting.Indented);
+Console.WriteLine(json);
 
-var web = new HtmlWeb();
+using (var fs = new FileStream("C:\\Users\\eqspe\\source\\repos\\parser\\news.json", FileMode.Append, FileAccess.Write))
+{
+    // Convert the JSON string to a byte array
+    byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
 
-var document = web.Load(url);
+    // Optionally add a newline before appending new data
+    byte[] newlineBytes = System.Text.Encoding.UTF8.GetBytes(Environment.NewLine);
+    fs.Write(newlineBytes, 0, newlineBytes.Length); // Write newline to separate entries
 
-HtmlNode titleDiv = document.DocumentNode.SelectSingleNode("/html/body/div[@class='MuiContainer-root layout-body-container jss12 MuiContainer-disableGutters MuiContainer-maxWidthXl']/div[@class='MuiContainer-root jss66 jss77 MuiContainer-maxWidthLg']/div[@class='MuiGrid-root jss65 MuiGrid-container MuiGrid-spacing-xs-3']/div/div[@class='MuiGrid-root MuiGrid-item MuiGrid-grid-sm-12 MuiGrid-grid-md-6']/a/div[@class='jss139']/div");
-var decode = HtmlEntity.DeEntitize(titleDiv.InnerHtml);
-Console.WriteLine(decode);
+    // Write the byte array to the file
+    fs.Write(jsonBytes, 0, jsonBytes.Length);
+}
+
+
 
 
