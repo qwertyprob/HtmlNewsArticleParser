@@ -1,16 +1,32 @@
-﻿//MAIN FILE!!!!!
+﻿using ParserHtml;
+using System.Collections.Generic;
 
+var MainClass = new NewsParseClass();
 
-using ParserHtml;
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-var pe = new NewsParseClass();
+var totalPages = 20;
+var allParsedNews = new List<NewsParseClass>(); 
 
-
-var arr=pe.SetArrayOfPages(3);
-
-
-foreach(var item in arr)
+for (int i = 1; i <= totalPages; i++)
 {
-    Console.WriteLine(item);
+    var page = MainClass.SetPage(i);
+    var parsedNews = MainClass.GetNewsFromPages(page);
+    allParsedNews.AddRange(parsedNews);
 }
 
+
+Console.WriteLine("Парсинг завершён. Найденные новости:");
+foreach (var news in allParsedNews)
+{
+    Console.WriteLine($"Theme:\t {news.Theme}");
+    Console.WriteLine($"Title:\t {news.Title}");
+    Console.WriteLine($"ImgUrl:\t {news.ImageUrl} (alt: {news.AltText})");
+    Console.WriteLine($"Publish Time: \t {news.PublishTime}");
+    Console.WriteLine($"Date now: \t {news.ParseDate}");
+    Console.WriteLine($"Text: {news.Content}");
+    Console.WriteLine(new string('-', 40)); // Разделитель между новостями
+}
+
+Console.WriteLine("Нажмите любую клавишу для выхода...");
+Console.ReadKey();
