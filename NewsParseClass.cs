@@ -9,8 +9,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using ParserHtml; 
 
-namespace ParserHtml
+namespace ParserHtml.NewsParseClass
 {
     public class NewsParseClass
     {
@@ -214,5 +215,29 @@ namespace ParserHtml
                 .ToLower();
             return contentUrl + $"/{parsedUrl}";
         }
+        public int CalculateTotalWordsInContent(List<NewsParseClass> newsList)
+        {
+            int totalWords = 0;
+
+            foreach (var newsItem in newsList)
+            {
+                if (!string.IsNullOrEmpty(newsItem.Content))
+                {
+                    // Разделяем текст контента на слова по пробелам и подсчитываем их количество
+                    var words = newsItem.Content.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    totalWords += words.Length;
+                }
+            }
+
+            return totalWords;
+        }
+
+        public double CalculateAverageWordsInContent(List<NewsParseClass> newsList)
+        {
+            int totalWords = CalculateTotalWordsInContent(newsList);
+            return newsList.Count > 0 ? (double)totalWords / newsList.Count : 0;
+        }
+
+
     }
 }
